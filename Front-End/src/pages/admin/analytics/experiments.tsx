@@ -8,6 +8,7 @@ import { requiredSampleSize } from "../../../utils/sample-size";
 
 const VERDICT_CLASS = { ship: "good", dont_ship: "bad", keep_running: "warn", investigate: "bad" } as const;
 
+const istDay = (iso: string) => new Date(iso).toLocaleDateString("en-CA", { timeZone: "Asia/Kolkata" });
 const pValue = (p: number) => (p < 0.0001 ? "< 0.0001" : p.toFixed(4));
 const signed = (x: number, fmt: (v: number) => string) => `${x >= 0 ? "+" : "−"}${fmt(Math.abs(x))}`;
 
@@ -115,7 +116,7 @@ const Experiments = () => {
                   </ul>
                   {data.experiment.startedAt && (
                     <p className="muted small">
-                      Ran {data.experiment.startedAt.slice(0, 10)} → {data.experiment.stoppedAt?.slice(0, 10) ?? "now"}
+                      Ran {istDay(data.experiment.startedAt)} → {data.experiment.stoppedAt ? istDay(data.experiment.stoppedAt) : "now"} (IST)
                       {data.experiment.simulated && " · simulated data"}
                     </p>
                   )}

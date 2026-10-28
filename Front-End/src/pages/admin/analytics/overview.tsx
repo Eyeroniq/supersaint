@@ -126,10 +126,11 @@ const Overview = () => {
           {funnel && funnel.byDevice.length > 1 && !device && (
             <BarsChart
               height={220}
-              labels={funnel.steps.map((s) => STEP_LABELS[s.step])}
+              // Step 1 is always 100%, so compare devices from add-to-cart onwards
+              labels={funnel.steps.slice(1).map((s) => `${STEP_LABELS[s.step]} (% of viewers)`)}
               series={funnel.byDevice.map((d, i) => ({
                 label: d.device,
-                data: d.steps.map((s) => s.conversionFromView),
+                data: d.steps.slice(1).map((s) => s.conversionFromView),
                 color: [COLORS.primary, COLORS.secondary, COLORS.control][i % 3],
               }))}
               format={(v) => pct(v, 1)}
