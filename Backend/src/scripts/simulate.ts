@@ -478,18 +478,25 @@ const main = async () => {
   for (let i = 0; i < userDocs.length; i += 5000)
     await db().collection<{ _id: string; [field: string]: unknown }>("users").insertMany(userDocs.slice(i, i + 5000));
 
-  // Same admin login as the live store, so you can open the simulated dashboard
-  if (process.env.ADMIN_EMAIL && process.env.ADMIN_PASSWORD)
+  // Same admin login as the live store. Reusing the live admin's id means a login token
+  // stays valid when the API is switched between the live and simulated databases.
+  if (process.env.ADMIN_EMAIL && process.env.ADMIN_PASSWORD) {
+    const email = process.env.ADMIN_EMAIL.toLowerCase();
+    const liveAdmin = await mongoose.connection
+      .useDb(process.env.LIVE_DB_NAME || "Ecommerce_24")
+      .collection<{ _id: string; [field: string]: unknown }>("users")
+      .findOne({ email, role: "admin" });
     await db().collection<{ _id: string; [field: string]: unknown }>("users").insertOne({
-      _id: "sim-admin",
+      _id: liveAdmin?._id ?? "sim-admin",
       name: "Admin",
-      email: process.env.ADMIN_EMAIL.toLowerCase(),
+      email,
       password: await bcrypt.hash(process.env.ADMIN_PASSWORD, 10),
       role: "admin",
       photo: "",
       createdAt: new Date(START_UTC),
       updatedAt: new Date(START_UTC),
     });
+  }
 
   await db().collection("coupons").insertMany([
     { code: "WELCOME100", type: "flat", amount: 100, maxDiscount: null },

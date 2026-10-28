@@ -21,7 +21,6 @@ import { setTrackingUser } from "./analytics/tracker";
 import { setAssignments, Assignment } from "./redux/reducer/experimentReducer";
 import { setFreeShippingThreshold } from "./redux/reducer/cartReducer";
 import { UserReducerInitialState } from "./types/reducer-types";
-import ProtectedRoute from "./components/protected-route";
 import Header from "./components/store/header";
 import Footer from "./components/store/footer";
 import MenuDrawer from "./components/store/menu-drawer";
@@ -102,6 +101,13 @@ const RequireLogin = ({ loggedIn }: { loggedIn: boolean }) => {
   );
 };
 
+// Admin pages: logged-out visitors go to login and come back; non-admins go home
+const RequireAdmin = ({ loggedIn, admin }: { loggedIn: boolean; admin: boolean }) => {
+  const { pathname, search } = useLocation();
+  if (!loggedIn) return <Navigate to={`/login?redirect=${encodeURIComponent(pathname + search)}`} replace />;
+  return admin ? <Outlet /> : <Navigate to="/" replace />;
+};
+
 // Login/register pages; once signed in, continue to wherever the user was headed
 const GuestOnly = ({ loggedIn }: { loggedIn: boolean }) => {
   const [params] = useSearchParams();
@@ -180,13 +186,7 @@ function App() {
 
           {/* //Admin Routes  */}
           <Route
-            element={
-              <ProtectedRoute
-                isAuthenticated={true}
-                adminOnly={true}
-                admin={user?.role === "admin" ? true : false}
-              />
-            }
+            element={<RequireAdmin loggedIn={!!user} admin={user?.role === "admin"} />}
           >
             <Route path="/admin/dashboard" element={<Dashboard />} />
             <Route path="/admin/product" element={<Products />} />

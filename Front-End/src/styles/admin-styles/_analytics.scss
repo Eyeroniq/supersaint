@@ -557,3 +557,10 @@
     color: var(--a-primary);
   }
 }
+
+// Below 1100px the admin sidebar collapses to a floating menu button at the top left
+@media (max-width: 1100px) {
+  .analytics {
+    padding: 4.5rem 1rem 3rem;
+  }
+}
