@@ -1,0 +1,5 @@
+coupon_code,orders,share_of_all_orders,apply_sessions,apply_to_order_rate,discount_cost,avg_discount,gmv,aov,incremental_aov,gmv_per_rupee_discount,cancellation_rate
+WELCOME100,2405,0.1444,3176,0.7572,240500.0,100.0,4659661.0,1937.49,-133.3,19.37,0.0478
+BIGSAINT200,640,0.0384,828,0.7729,128000.0,200.0,1552418.0,2425.65,354.87,12.13,0.0578
+FLAT150,311,0.0187,420,0.7405,46650.0,150.0,577613.0,1857.28,-213.51,12.38,0.0482
+SAINT10,192,0.0115,242,0.7934,35090.0,182.76,341151.0,1776.83,-293.96,9.72,0.0469

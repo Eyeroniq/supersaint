@@ -1,0 +1,8 @@
+segment,customers,customer_share,revenue,revenue_share,avg_recency_days,avg_orders,avg_spend
+Hibernating,5175,0.3925,11975141.0,0.3688,269.8,1.09,2314.04
+New Customers,4392,0.3331,9132981.0,0.2813,43.0,1.0,2079.46
+Need Attention,2609,0.1979,5888434.0,0.1813,139.4,1.19,2256.97
+Potential Loyalists,787,0.0597,3578522.0,0.1102,41.4,2.2,4547.04
+Champions,95,0.0072,883445.0,0.0272,43.6,4.51,9299.42
+At Risk,99,0.0075,740646.0,0.0228,230.3,3.4,7481.27
+Loyal,28,0.0021,273339.0,0.0084,128.5,4.82,9762.11

@@ -1,0 +1,26 @@
+cost_rank,city,state,orders,cod_share,cod_rto_rate,prepaid_rto_rate,cod_rto_orders,est_cod_rto_cost_inr,cumulative_share_of_cod_rto
+1,Delhi,Delhi,1816,0.4069,0.1042,0.0279,77,13860,0.0819
+2,Bengaluru,Karnataka,2229,0.3795,0.0875,0.0217,74,13320,0.1606
+3,Mumbai,Maharashtra,1837,0.399,0.09,0.0145,66,11880,0.2309
+4,Ahmedabad,Gujarat,759,0.5771,0.137,0.0249,60,10800,0.2947
+5,Hyderabad,Telangana,1294,0.415,0.095,0.0238,51,9180,0.3489
+6,Pune,Maharashtra,1296,0.3858,0.096,0.0138,48,8640,0.4
+7,Patna,Bihar,388,0.7088,0.16,0.0531,44,7920,0.4468
+8,Lucknow,Uttar Pradesh,579,0.5268,0.1344,0.0182,41,7380,0.4904
+9,Chennai,Tamil Nadu,1101,0.3969,0.087,0.0211,38,6840,0.5309
+10,Guwahati,Assam,300,0.7833,0.1532,0.0154,36,6480,0.5691
+10,Jaipur,Rajasthan,537,0.5531,0.1212,0.0167,36,6480,0.6074
+12,Dehradun,Uttarakhand,227,0.6608,0.2267,0.039,34,6120,0.6436
+13,Chandigarh,Chandigarh,430,0.5442,0.141,0.0153,33,5940,0.6787
+14,Madurai,Tamil Nadu,193,0.7047,0.2279,0.0702,31,5580,0.7117
+15,Kochi,Kerala,361,0.5485,0.1465,0.0184,29,5220,0.7426
+16,Kolkata,West Bengal,884,0.3835,0.0826,0.022,28,5040,0.7723
+16,Ranchi,Jharkhand,206,0.7282,0.1867,0.0,28,5040,0.8021
+18,Bhubaneswar,Odisha,232,0.7414,0.157,0.0167,27,4860,0.8309
+18,Nagpur,Maharashtra,353,0.5581,0.1371,0.0064,27,4860,0.8596
+20,Agra,Uttar Pradesh,192,0.7552,0.1793,0.0638,26,4680,0.8872
+21,Varanasi,Uttar Pradesh,191,0.6963,0.188,0.0172,25,4500,0.9138
+22,Indore,Madhya Pradesh,370,0.5378,0.1106,0.0234,22,3960,0.9372
+22,Surat,Gujarat,406,0.5788,0.0936,0.0117,22,3960,0.9606
+24,Raipur,Chhattisgarh,168,0.7202,0.157,0.0,19,3420,0.9809
+25,Ludhiana,Punjab,306,0.5784,0.1017,0.0388,18,3240,1.0

@@ -1,0 +1,5 @@
+experiment,variant,exposed_sessions,converted_sessions,conversion_rate,orders,aov,aov_variance,revenue,revenue_per_session,cancellation_rate,z_vs_control
+coupon_offer,control,2575,1037,0.40272,1037,1910.69,887616.33,1981383.0,769.47,0.055,
+coupon_offer,treatment,2613,1066,0.40796,1066,1922.77,888760.36,2049670.0,784.41,0.0563,0.3845
+free_shipping_threshold,control,2748,1061,0.3861,1061,2010.53,988803.64,2133168.0,776.26,0.0566,
+free_shipping_threshold,treatment,2666,1022,0.38335,1022,2171.68,888685.87,2219452.0,832.5,0.0568,-0.2082
