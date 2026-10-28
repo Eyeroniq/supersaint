@@ -14,7 +14,10 @@
     "test": "vitest run",
     "export:warehouse": "tsc && node dist/scripts/export-warehouse.js",
     "sql": "node dist/scripts/run-sql.js",
-    "analytics": "npm run seed:sim && npm run export:warehouse && npm run sql && npm test"
+    "analytics": "npm run seed:sim && npm run export:warehouse && npm run sql && npm test",
+    "start:sim": "node dist/scripts/start-sim.js",
+    "dev:sim": "nodemon dist/scripts/start-sim.js",
+    "bench": "node dist/scripts/bench-analytics.js"
   },
   "author": "",
   "license": "ISC",

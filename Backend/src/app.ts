@@ -14,6 +14,7 @@ import paymentRoute from "./routes/payment.js";
 import dashboardRoute from "./routes/stats.js";
 import eventRoute from "./routes/events.js";
 import experimentRoute from "./routes/experiments.js";
+import analyticsRoute from "./routes/analytics.js";
 
 config({
   path: "./.env",
@@ -44,6 +45,7 @@ app.use("/api/v1/payment", paymentRoute);
 app.use("/api/v1/dashboard", dashboardRoute);
 app.use("/api/v1/events", eventRoute);
 app.use("/api/v1/experiments", experimentRoute);
+app.use("/api/v1/analytics", analyticsRoute);
 
 app.use("/uploads", express.static("uploads"));
 app.use(errorMiddleware);

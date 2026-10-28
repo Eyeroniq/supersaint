@@ -23,10 +23,15 @@ const schema = new mongoose.Schema(
   { versionKey: false }
 );
 
-schema.index({ timestamp: 1 });
-schema.index({ type: 1, timestamp: 1 });
+// Covering indexes: each analytics aggregation can be answered from an index alone
+// (no document fetches), which is what keeps dashboard queries fast at ~1.4M events.
+// Funnel, KPIs and daily series: time range -> group by session
+schema.index({ timestamp: 1, session_id: 1, type: 1, device: 1, is_returning: 1 });
+// Product engagement: views / add-to-cart by product and session
+schema.index({ type: 1, timestamp: 1, product_id: 1, session_id: 1 });
+// Search insights: terms by session
+schema.index({ type: 1, timestamp: 1, "metadata.term": 1, session_id: 1 });
 schema.index({ session_id: 1, timestamp: 1 });
-schema.index({ product_id: 1, type: 1 });
 schema.index({ experiment: 1, variant: 1, type: 1 });
 schema.index({ anon_id: 1 });
 

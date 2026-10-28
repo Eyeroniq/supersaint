@@ -1,14 +1,14 @@
 -- Q: Which products earn the revenue, which convert, and which are about to run out?
--- Per SKU: views, add-to-cart rate, view-to-order conversion, revenue, return rate,
+-- Per SKU: views, add-to-cart rate (add-to-cart events / views), view-to-order rate
+-- (non-cancelled order lines for the SKU / views), revenue, return rate,
 -- Pareto running share of revenue (window SUM) and ABC class, plus days of stock cover.
 --   ABC: A = products that make up the first 80% of revenue, B = next 15%, C = last 5%
 --   days_of_cover = stock / average daily units over the last 30 days of data
 WITH engagement AS (
     SELECT
         product_id,
-        COUNT(*) FILTER (WHERE event_type = 'product_view')                    AS views,
-        COUNT(DISTINCT session_id) FILTER (WHERE event_type = 'product_view')  AS view_sessions,
-        COUNT(DISTINCT session_id) FILTER (WHERE event_type = 'add_to_cart')   AS cart_sessions
+        COUNT(*) FILTER (WHERE event_type = 'product_view') AS views,
+        COUNT(*) FILTER (WHERE event_type = 'add_to_cart')  AS add_to_carts
     FROM fact_events
     WHERE product_id IS NOT NULL
     GROUP BY product_id
@@ -19,7 +19,7 @@ last_day AS (
 sales AS (
     SELECT
         i.product_id,
-        COUNT(DISTINCT o.session_id) FILTER (WHERE NOT o.is_cancelled)               AS order_sessions,
+        COUNT(*)            FILTER (WHERE NOT o.is_cancelled)                        AS orders,
         SUM(i.quantity)     FILTER (WHERE NOT o.is_cancelled)                        AS units,
         SUM(i.line_revenue) FILTER (WHERE NOT o.is_cancelled)                        AS revenue,
         SUM(i.quantity)     FILTER (WHERE o.is_returned OR o.is_rto)                 AS returned_units,
@@ -38,9 +38,8 @@ base AS (
         p.price,
         p.stock,
         COALESCE(e.views, 0)            AS views,
-        COALESCE(e.view_sessions, 0)    AS view_sessions,
-        COALESCE(e.cart_sessions, 0)    AS cart_sessions,
-        COALESCE(s.order_sessions, 0)   AS order_sessions,
+        COALESCE(e.add_to_carts, 0)     AS add_to_carts,
+        COALESCE(s.orders, 0)           AS orders,
         COALESCE(s.units, 0)            AS units,
         COALESCE(s.revenue, 0)          AS revenue,
         COALESCE(s.returned_units, 0)   AS returned_units,
@@ -64,8 +63,10 @@ SELECT
     category,
     price,
     views,
-    ROUND(cart_sessions / NULLIF(view_sessions, 0), 4)              AS add_to_cart_rate,
-    ROUND(order_sessions / NULLIF(view_sessions, 0), 4)             AS view_to_order_rate,
+    add_to_carts,
+    ROUND(add_to_carts / NULLIF(views, 0), 4)                       AS add_to_cart_rate,
+    orders,
+    ROUND(orders / NULLIF(views, 0), 4)                             AS view_to_order_rate,
     units,
     ROUND(revenue, 2)                                               AS revenue,
     ROUND(revenue / NULLIF(total_revenue, 0), 4)                    AS revenue_share,
