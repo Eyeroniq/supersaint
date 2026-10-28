@@ -129,6 +129,8 @@ export type NewOrderRequest = {
   orderItems: CartItem[];
   coupon?: string;
   paymentMethod: "COD" | "ONLINE";
+  sessionId?: string;
+  anonId?: string;
   razorpay?: {
     orderId: string;
     paymentId: string;

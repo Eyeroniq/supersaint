@@ -1756,3 +1756,18 @@ button {
   color: #fff;
   font-weight: 600;
 }
+
+.cart-offer {
+  font-size: 0.82rem;
+  background: #f1f1f8;
+  border-left: 3px solid var(--badge);
+  padding: 0.6rem 0.8rem;
+  margin: -0.4rem 0 1rem;
+}
+
+.status--cancelled,
+.status--rto,
+.status--returned {
+  background: #fde8e8;
+  color: #a12727;
+}

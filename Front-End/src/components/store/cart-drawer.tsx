@@ -1,8 +1,9 @@
 import { PiHandbag, PiLockSimple, PiTruck } from "react-icons/pi";
+import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useTrack } from "../../analytics/useTrack";
 import { Link, useNavigate } from "react-router-dom";
 import { useLatestProductsQuery } from "../../redux/api/productAPI";
-import { FREE_SHIPPING_THRESHOLD } from "../../redux/reducer/cartReducer";
 import { setCartOpen } from "../../redux/reducer/uiReducer";
 import { RootState } from "../../redux/store";
 import { formatPrice, photoUrl } from "../../utils/format";
@@ -10,8 +11,9 @@ import CartLine from "./cart-line";
 import Drawer from "./drawer";
 
 export const ShippingProgress = ({ subtotal }: { subtotal: number }) => {
-  const left = FREE_SHIPPING_THRESHOLD - subtotal;
-  const pct = Math.min((subtotal / FREE_SHIPPING_THRESHOLD) * 100, 100);
+  const threshold = useSelector((state: RootState) => state.cartReducer.freeShippingThreshold);
+  const left = threshold - subtotal;
+  const pct = Math.min((subtotal / threshold) * 100, 100);
   return (
     <div className="ship-progress">
       <p>
@@ -39,7 +41,14 @@ const CartDrawer = () => {
     (state: RootState) => state.cartReducer
   );
   const { data } = useLatestProductsQuery("", { skip: !open });
+  const { assignments, couponOffer } = useSelector((state: RootState) => state.experimentReducer);
+  const { trackExposure } = useTrack();
   const close = () => dispatch(setCartOpen(false));
+
+  // A visitor is "exposed" once they actually see the cart with items in it
+  useEffect(() => {
+    if (open && cartItems.length) assignments.forEach((a) => trackExposure(a.key, a.variant));
+  }, [open, cartItems.length, assignments, trackExposure]);
 
   const inCart = new Set(cartItems.map((i) => i.productId));
   const suggestions = (data?.products ?? []).filter((p) => !inCart.has(p._id) && p.stock > 0).slice(0, 6);
@@ -64,6 +73,11 @@ const CartDrawer = () => {
         <>
           <div className="cart-drawer__body">
             <ShippingProgress subtotal={subtotal} />
+            {couponOffer && (
+              <p className="cart-offer">
+                Offer for you: use code <strong>{couponOffer.code}</strong> at checkout ({couponOffer.label.split("·")[1]?.trim()})
+              </p>
+            )}
             <div className="cart-drawer__lines">
               {cartItems.map((item) => (
                 <CartLine key={item.productId + (item.size || "")} item={item} onNavigate={close} />

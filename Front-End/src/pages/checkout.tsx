@@ -12,6 +12,8 @@ import { RootState, server } from "../redux/store";
 import { NewOrderRequest } from "../types/api-types";
 import { ShippingInfo } from "../types/types";
 import { formatPrice, photoUrl } from "../utils/format";
+import { useTrack } from "../analytics/useTrack";
+import { getAnonId, getSessionId } from "../analytics/identity";
 
 const errorMessage = (e: unknown, fallback: string) =>
   axios.isAxiosError(e) ? e.response?.data?.message ?? fallback : fallback;
@@ -66,6 +68,16 @@ const Checkout = () => {
   // Set once an order succeeds so clearing the cart doesn't bounce us to /cart
   const placedRef = useRef(false);
 
+  const { track } = useTrack();
+  useEffect(() => {
+    if (cartItems.length)
+      track("checkout_started", {
+        metadata: { items: cartItems.reduce((n, i) => n + i.quantity, 0), subtotal },
+      });
+    // once per visit to checkout
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   useEffect(() => {
     axios
       .get(`${server}/api/v1/payment/config`)
@@ -87,9 +99,10 @@ const Checkout = () => {
     if (!code) return;
     try {
       const { data } = await axios.get(`${server}/api/v1/payment/discount`, {
-        params: { coupon: code },
+        params: { coupon: code, subtotal },
       });
       dispatch(discountApplied({ code, amount: data.discount }));
+      track("coupon_applied", { metadata: { code, discount: data.discount, subtotal } });
       toast.success(`Coupon applied: ${formatPrice(data.discount)} off`);
     } catch (e) {
       dispatch(discountApplied({ code: "", amount: 0 }));
@@ -104,6 +117,8 @@ const Checkout = () => {
       coupon: couponCode || undefined,
       paymentMethod: razorpay ? "ONLINE" : "COD",
       razorpay,
+      sessionId: getSessionId(),
+      anonId: getAnonId(),
     };
     setPlacing(true);
     const res = await newOrder(order);
@@ -168,6 +183,7 @@ const Checkout = () => {
       return toast.error("Please enter a valid 10-digit phone number");
     if (!/^\d{6}$/.test(String(form.pinCode))) return toast.error("Please enter a valid 6-digit PIN code");
     dispatch(saveShippingInfo(form));
+    track("payment_attempted", { metadata: { method, total } });
 
     if (method === "COD") return placeOrder();
     return payOnline();

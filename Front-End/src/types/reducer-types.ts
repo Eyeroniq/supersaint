@@ -16,6 +16,7 @@ export interface CartReducerInitialState {
   couponCode: string;
   total: number;
   shippingInfo: ShippingInfo;
+  freeShippingThreshold: number;
 }
 
 export interface UiReducerInitialState {

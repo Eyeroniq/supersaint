@@ -15,6 +15,11 @@ import { userExist, userNotExist } from "./redux/reducer/userReducer";
 import { closeAll } from "./redux/reducer/uiReducer";
 import { useDispatch, useSelector } from "react-redux";
 import { getMe } from "./redux/api/userAPI";
+import axios from "axios";
+import { getAnonId } from "./analytics/identity";
+import { setTrackingUser } from "./analytics/tracker";
+import { setAssignments, Assignment } from "./redux/reducer/experimentReducer";
+import { setFreeShippingThreshold } from "./redux/reducer/cartReducer";
 import { UserReducerInitialState } from "./types/reducer-types";
 import ProtectedRoute from "./components/protected-route";
 import Header from "./components/store/header";
@@ -104,6 +109,25 @@ function App() {
   );
 
   const dispatch = useDispatch();
+
+  useEffect(() => setTrackingUser(user?._id ?? null), [user?._id]);
+
+  // Experiment variants are decided by the server from the anonymous visitor id
+  useEffect(() => {
+    axios
+      .get<{
+        assignments: Assignment[];
+        freeShippingThreshold: number;
+        couponOffer: { code: string; label: string } | null;
+      }>(`${import.meta.env.VITE_SERVER}/api/v1/experiments/assignments`, {
+        params: { anonId: getAnonId() },
+      })
+      .then(({ data }) => {
+        dispatch(setAssignments({ assignments: data.assignments, couponOffer: data.couponOffer }));
+        dispatch(setFreeShippingThreshold(data.freeShippingThreshold));
+      })
+      .catch(() => dispatch(setFreeShippingThreshold(999)));
+  }, [dispatch]);
 
   useEffect(() => {
     if (!token) {

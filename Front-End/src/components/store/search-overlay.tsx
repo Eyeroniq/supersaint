@@ -3,6 +3,7 @@ import { PiMagnifyingGlass, PiX } from "react-icons/pi";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { useSearchProductsQuery } from "../../redux/api/productAPI";
+import { useTrack } from "../../analytics/useTrack";
 import { setSearchOpen } from "../../redux/reducer/uiReducer";
 import { RootState } from "../../redux/store";
 import { formatPrice, photoUrl } from "../../utils/format";
@@ -50,6 +51,17 @@ const SearchOverlay = () => {
   };
 
   const results = query ? data?.products.slice(0, 6) ?? [] : [];
+
+  const { track } = useTrack();
+  const lastTracked = useRef("");
+  useEffect(() => {
+    if (!query || isFetching || !data || lastTracked.current === query) return;
+    lastTracked.current = query;
+    const count = data.total ?? data.products.length;
+    track(count ? "search" : "search_zero_results", {
+      metadata: { term: query.toLowerCase().slice(0, 80), results: count, source: "live_search" },
+    });
+  }, [query, isFetching, data, track]);
 
   return (
     <div className={`search-overlay ${open ? "is-open" : ""}`} aria-hidden={!open}>

@@ -15,6 +15,7 @@ import {
 } from "../redux/api/productAPI";
 import { addToCart } from "../redux/reducer/cartReducer";
 import { setCartOpen } from "../redux/reducer/uiReducer";
+import { useTrack } from "../analytics/useTrack";
 import { baseName, formatPrice, photoUrl, savePercent } from "../utils/format";
 
 const SIZE_CHART = [
@@ -45,10 +46,17 @@ const ProductPage = () => {
   const [zoom, setZoom] = useState({ on: false, x: 50, y: 50 });
   const carouselRef = useRef<HTMLDivElement>(null);
 
+  const { track } = useTrack();
+
   useEffect(() => {
     setSize(product?.sizes?.[0] ?? "");
     setQty(1);
     window.scrollTo({ top: 0, behavior: "smooth" });
+    if (product)
+      track("product_view", {
+        product_id: product._id,
+        metadata: { category: product.category, price: product.price },
+      });
   }, [product?._id]);
 
   if (isError)
@@ -93,6 +101,10 @@ const ProductPage = () => {
         quantity: qty,
       })
     );
+    track("add_to_cart", {
+      product_id: product._id,
+      metadata: { quantity: qty, size: size || null, price: product.price, buy_now: goToCheckout },
+    });
     if (goToCheckout) navigate("/checkout");
     else dispatch(setCartOpen(true));
   };

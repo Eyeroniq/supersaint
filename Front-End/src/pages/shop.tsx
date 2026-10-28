@@ -6,6 +6,7 @@ import ProductCard, { ProductTileSkeleton } from "../components/store/product-ca
 import Reveal from "../components/store/reveal";
 import { useCategoriesQuery, useSearchProductsQuery } from "../redux/api/productAPI";
 import { formatPrice } from "../utils/format";
+import { useTrack } from "../analytics/useTrack";
 
 const MAX_PRICE = 5000;
 const SORTS = [
@@ -36,6 +37,16 @@ const Shop = () => {
     price: price < MAX_PRICE ? price : 0,
     page,
   });
+
+  const { track } = useTrack();
+  useEffect(() => {
+    if (!search || isFetching || !data) return;
+    track(data.total ? "search" : "search_zero_results", {
+      metadata: { term: search.toLowerCase().slice(0, 80), results: data.total, source: "results_page" },
+    });
+    // once per search term landing
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [search, isFetching]);
 
   const update = (patch: Record<string, string | number>) => {
     const next = new URLSearchParams(params);

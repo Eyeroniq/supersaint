@@ -26,6 +26,7 @@ const initialState: CartReducerInitialState = {
   couponCode: "",
   total: 0,
   shippingInfo: emptyShipping,
+  freeShippingThreshold: FREE_SHIPPING_THRESHOLD,
 };
 
 const loadState = (): CartReducerInitialState => {
@@ -57,7 +58,9 @@ const recalc = (state: CartReducerInitialState) => {
 
   state.subtotal = subtotal;
   state.shippingCharges =
-    subtotal === 0 || subtotal >= FREE_SHIPPING_THRESHOLD ? 0 : SHIPPING_FEE;
+    subtotal === 0 || subtotal >= (state.freeShippingThreshold || FREE_SHIPPING_THRESHOLD)
+      ? 0
+      : SHIPPING_FEE;
   // Prices are inclusive of GST
   state.tax = 0;
   state.discount = Math.min(state.discount, subtotal);
@@ -117,7 +120,16 @@ export const cartReducer = createSlice({
     saveShippingInfo: (state, action: PayloadAction<ShippingInfo>) => {
       state.shippingInfo = action.payload;
     },
-    resetCart: (state) => ({ ...initialState, shippingInfo: state.shippingInfo }),
+    // Only the free-shipping experiment changes this; default stays ₹999
+    setFreeShippingThreshold: (state, action: PayloadAction<number>) => {
+      state.freeShippingThreshold = action.payload;
+      recalc(state);
+    },
+    resetCart: (state) => ({
+      ...initialState,
+      shippingInfo: state.shippingInfo,
+      freeShippingThreshold: state.freeShippingThreshold,
+    }),
   },
 });
 
@@ -128,5 +140,6 @@ export const {
   calculatePrice,
   discountApplied,
   saveShippingInfo,
+  setFreeShippingThreshold,
   resetCart,
 } = cartReducer.actions;

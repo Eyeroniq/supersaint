@@ -4,6 +4,7 @@ import { userReducer } from "./reducer/userReducer";
 import { productAPI } from "./api/productAPI";
 import { cartReducer, persistCart } from "./reducer/cartReducer";
 import { uiReducer } from "./reducer/uiReducer";
+import { experimentReducer } from "./reducer/experimentReducer";
 import { orderApi } from "./api/orderAPI";
 import { dashboardApi } from "./api/dashboardAPI";
 
@@ -19,6 +20,7 @@ export const store = configureStore({
     [userReducer.name]: userReducer.reducer,
     [cartReducer.name]: cartReducer.reducer,
     [uiReducer.name]: uiReducer.reducer,
+    [experimentReducer.name]: experimentReducer.reducer,
   },
   // middleware: (mid) => [...mid(), userAPI.middleware],----> changed
   middleware: (mid) =>
