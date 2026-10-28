@@ -13,6 +13,13 @@ import {
   RiCoupon3Fill,
   RiDashboardFill,
   RiShoppingBag3Fill,
+  RiLineChartLine,
+  RiUserHeartLine,
+  RiBox3Line,
+  RiTruckLine,
+  RiSearchLine,
+  RiFlaskLine,
+  RiDownload2Line,
 } from "react-icons/ri";
 import { Link, Location, useLocation } from "react-router-dom";
 import { IconType } from "react-icons";
@@ -61,6 +68,7 @@ const AdminSidebar = () => {
       >
         <h2>Super Saint.</h2>
         <DivOne location={location} />
+        <DivAnalytics location={location} />
         <DivTwo location={location} />
         <DivThree location={location} />
 
@@ -102,6 +110,21 @@ const DivOne = ({ location }: { location: Location }) => (
         Icon={AiFillFileText}
         location={location}
       />
+    </ul>
+  </div>
+);
+
+const DivAnalytics = ({ location }: { location: Location }) => (
+  <div>
+    <h5>Analytics</h5>
+    <ul>
+      <Li url="/admin/analytics/overview" text="Overview" Icon={RiLineChartLine} location={location} />
+      <Li url="/admin/analytics/customers" text="Customers" Icon={RiUserHeartLine} location={location} />
+      <Li url="/admin/analytics/products" text="Products" Icon={RiBox3Line} location={location} />
+      <Li url="/admin/analytics/operations" text="Payments & ops" Icon={RiTruckLine} location={location} />
+      <Li url="/admin/analytics/marketing" text="Search & coupons" Icon={RiSearchLine} location={location} />
+      <Li url="/admin/analytics/experiments" text="A/B tests" Icon={RiFlaskLine} location={location} />
+      <Li url="/admin/analytics/exports" text="Exports" Icon={RiDownload2Line} location={location} />
     </ul>
   </div>
 );

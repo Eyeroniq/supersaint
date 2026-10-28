@@ -55,6 +55,13 @@ const NewProduct = lazy(() => import("./pages/admin/management/newproduct"));
 const ProductManagement = lazy(
   () => import("./pages/admin/management/productmanagement")
 );
+const AnalyticsOverview = lazy(() => import("./pages/admin/analytics/overview"));
+const AnalyticsCustomers = lazy(() => import("./pages/admin/analytics/customers"));
+const AnalyticsProducts = lazy(() => import("./pages/admin/analytics/products"));
+const AnalyticsOperations = lazy(() => import("./pages/admin/analytics/operations"));
+const AnalyticsMarketing = lazy(() => import("./pages/admin/analytics/marketing"));
+const AnalyticsExperiments = lazy(() => import("./pages/admin/analytics/experiments"));
+const AnalyticsExports = lazy(() => import("./pages/admin/analytics/exports"));
 const TransactionManagement = lazy(
   () => import("./pages/admin/management/transactionmanagement")
 );
@@ -193,6 +200,16 @@ function App() {
             <Route path="/admin/app/coupon" element={<Coupon />} />
             <Route path="/admin/app/stopwatch" element={<Stopwatch />} />
             <Route path="/admin/app/toss" element={<Toss />} />
+
+            {/* Analytics */}
+            <Route path="/admin/analytics" element={<Navigate to="/admin/analytics/overview" replace />} />
+            <Route path="/admin/analytics/overview" element={<AnalyticsOverview />} />
+            <Route path="/admin/analytics/customers" element={<AnalyticsCustomers />} />
+            <Route path="/admin/analytics/products" element={<AnalyticsProducts />} />
+            <Route path="/admin/analytics/operations" element={<AnalyticsOperations />} />
+            <Route path="/admin/analytics/marketing" element={<AnalyticsMarketing />} />
+            <Route path="/admin/analytics/experiments" element={<AnalyticsExperiments />} />
+            <Route path="/admin/analytics/exports" element={<AnalyticsExports />} />
 
             {/* Management */}
             <Route path="/admin/product/new" element={<NewProduct />} />

@@ -7,6 +7,7 @@ import { uiReducer } from "./reducer/uiReducer";
 import { experimentReducer } from "./reducer/experimentReducer";
 import { orderApi } from "./api/orderAPI";
 import { dashboardApi } from "./api/dashboardAPI";
+import { analyticsApi } from "./api/analyticsAPI";
 
 export const server = import.meta.env.VITE_SERVER;
 
@@ -17,6 +18,7 @@ export const store = configureStore({
     [productAPI.reducerPath]: productAPI.reducer,
     [orderApi.reducerPath]: orderApi.reducer,
     [dashboardApi.reducerPath]: dashboardApi.reducer,
+    [analyticsApi.reducerPath]: analyticsApi.reducer,
     [userReducer.name]: userReducer.reducer,
     [cartReducer.name]: cartReducer.reducer,
     [uiReducer.name]: uiReducer.reducer,
@@ -28,7 +30,8 @@ export const store = configureStore({
       userAPI.middleware,
       productAPI.middleware,
       orderApi.middleware,
-      dashboardApi.middleware
+      dashboardApi.middleware,
+      analyticsApi.middleware
     ),
   // Batch RTK Query notifications on a timer, not requestAnimationFrame, so
   // results still render in background/throttled tabs
