@@ -9,7 +9,9 @@
     "build": "tsc",
     "watch": "tsc -w",
     "dev": "nodemon dist/app.js",
-    "seed": "node seed.js"
+    "seed": "node seed.js",
+    "seed:sim": "tsc && node dist/scripts/simulate.js",
+    "test": "vitest run"
   },
   "author": "",
   "license": "ISC",
