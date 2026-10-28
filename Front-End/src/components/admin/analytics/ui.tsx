@@ -30,12 +30,14 @@ export const PRESETS = [
 export const useRange = (defaultDays = 30) => {
   const { data: meta } = useMetaQuery();
   const [params, setParams] = useSearchParams();
+  // A fresh store has no data yet: anchor ranges on today (IST) so pages still load
+  const maxDate = meta ? meta.maxDate ?? new Date().toLocaleDateString("en-CA", { timeZone: "Asia/Kolkata" }) : null;
   const range = useMemo<Range | null>(() => {
-    if (!meta?.maxDate) return null;
-    const to = params.get("to") ?? meta.maxDate;
+    if (!meta || !maxDate) return null;
+    const to = params.get("to") ?? maxDate;
     const from = params.get("from") ?? shift(to, -(defaultDays - 1));
     return { from: meta.minDate && from < meta.minDate ? meta.minDate : from, to };
-  }, [meta, params, defaultDays]);
+  }, [meta, maxDate, params, defaultDays]);
 
   const setRange = (r: Range) => {
     const next = new URLSearchParams(params);
@@ -44,14 +46,14 @@ export const useRange = (defaultDays = 30) => {
     setParams(next, { replace: true });
   };
   const setPreset = (presetDays: number) => {
-    if (!meta?.maxDate) return;
-    setRange({ from: shift(meta.maxDate, -(presetDays - 1)), to: meta.maxDate });
+    if (!maxDate) return;
+    setRange({ from: shift(maxDate, -(presetDays - 1)), to: maxDate });
   };
-  return { meta, range, setRange, setPreset };
+  return { meta, maxDate, range, setRange, setPreset };
 };
 
 export const DateRangeBar = ({ state }: { state: ReturnType<typeof useRange> }) => {
-  const { meta, range, setRange, setPreset } = state;
+  const { meta, maxDate, range, setRange, setPreset } = state;
   if (!range || !meta) return null;
   const lengthDays = (Date.parse(range.to) - Date.parse(range.from)) / 86400000 + 1;
   return (
@@ -60,7 +62,7 @@ export const DateRangeBar = ({ state }: { state: ReturnType<typeof useRange> }) 
         {PRESETS.map((p) => (
           <button
             key={p.label}
-            className={range.to === meta.maxDate && lengthDays === p.days ? "is-active" : ""}
+            className={range.to === maxDate && lengthDays === p.days ? "is-active" : ""}
             onClick={() => setPreset(p.days)}
           >
             {p.label}
@@ -83,7 +85,7 @@ export const DateRangeBar = ({ state }: { state: ReturnType<typeof useRange> }) 
           type="date"
           value={range.to}
           min={range.from}
-          max={meta.maxDate ?? undefined}
+          max={maxDate ?? undefined}
           onChange={(e) => e.target.value && setRange({ ...range, to: e.target.value })}
         />
       </label>
