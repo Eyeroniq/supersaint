@@ -3,10 +3,11 @@ import { InvalidateCacheProps, OrderItemType } from "../types/types.js";
 import { Product } from "../models/product.js";
 import { myCache } from "../app.js";
 
-export const connectDB = (uri: string) => {
+// DB_NAME lets the same server run against the simulated analytics database
+export const connectDB = (uri: string, dbName = process.env.DB_NAME || "Ecommerce_24") => {
   mongoose
     .connect(uri, {
-      dbName: "Ecommerce_24",
+      dbName,
     })
     .then((c) => console.log(`DB Connected to ${c.connection.host}`))
     .catch((e) => console.log("Error occured in connecting DB : " + e));

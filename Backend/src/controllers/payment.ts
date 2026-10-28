@@ -1,7 +1,7 @@
 import { TryCatch } from "../middlewares/error.js";
 import { Coupon } from "../models/coupon.js";
 import ErrorHandler from "../utils/utility-class.js";
-import { priceOrder } from "../utils/pricing.js";
+import { couponDiscount, priceOrder } from "../utils/pricing.js";
 import { createRazorpayOrder, razorpayEnabled, razorpayKeyId } from "../utils/razorpay.js";
 
 // Tells the storefront whether online payment is available
@@ -16,6 +16,7 @@ export const paymentConfig = TryCatch(async (req, res) => {
 // Creates a Razorpay order for the server-priced cart total
 export const createRazorpayPayment = TryCatch(async (req, res, next) => {
   const { orderItems, coupon } = req.body;
+  // Prepaid orders always ship free, so the shipping experiment can't change this total
   const priced = await priceOrder(orderItems, coupon, true);
 
   const rzpOrder = await createRazorpayOrder(
@@ -34,12 +35,12 @@ export const createRazorpayPayment = TryCatch(async (req, res, next) => {
 });
 
 export const newCoupon = TryCatch(async (req, res, next) => {
-  const { coupon, amount } = req.body;
+  const { coupon, amount, type = "flat", maxDiscount } = req.body;
 
   if (!coupon || !amount)
     return next(new ErrorHandler("Please enter both coupon and amount", 400));
 
-  await Coupon.create({ code: coupon, amount });
+  await Coupon.create({ code: coupon, amount, type, maxDiscount: maxDiscount || null });
 
   return res.status(201).json({
     success: true,
@@ -53,13 +54,23 @@ export const applyDiscount = TryCatch(async (req, res, next) => {
   if (typeof coupon !== "string" || !coupon)
     return next(new ErrorHandler("Please enter a coupon code", 400));
 
-  const discount = await Coupon.findOne({ code: coupon });
+  const found = await Coupon.findOne({ code: coupon });
 
-  if (!discount) return next(new ErrorHandler("Invalid Coupon Code", 400));
+  if (!found) return next(new ErrorHandler("Invalid Coupon Code", 400));
+
+  // Percent coupons need the cart subtotal to work out the rupee amount
+  const subtotal = Number(req.query.subtotal) || 0;
+  const discount = subtotal
+    ? couponDiscount(found, subtotal)
+    : found.type === "percent"
+      ? 0
+      : found.amount;
 
   return res.status(200).json({
     success: true,
-    discount: discount.amount,
+    discount,
+    type: found.type,
+    amount: found.amount,
   });
 });
 

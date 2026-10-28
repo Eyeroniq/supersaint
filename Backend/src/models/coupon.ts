@@ -6,9 +6,19 @@ const schema = new mongoose.Schema({
     required: [true, "Please enter the Coupon Code"],
     unique: true,
   },
+  // "flat" = amount is rupees off; "percent" = amount is % off, capped by maxDiscount
+  type: {
+    type: String,
+    enum: ["flat", "percent"],
+    default: "flat",
+  },
   amount: {
     type: Number,
     required: [true, "Please enter the Discount Amount"],
+  },
+  maxDiscount: {
+    type: Number,
+    default: null,
   },
 });
 

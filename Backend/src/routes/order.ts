@@ -7,6 +7,7 @@ import {
   myOrders,
   newOrder,
   processOrder,
+  setOrderStatus,
 } from "../controllers/order.js";
 
 const app = express.Router();
@@ -19,6 +20,9 @@ app.get("/my", isAuthenticated, myOrders);
 
 // route - /api/v1/order/all
 app.get("/all", adminOnly, allOrders);
+
+// route - /api/v1/order/:id/status (admin: cancel, RTO, return)
+app.put("/:id/status", adminOnly, setOrderStatus);
 
 app
   .route("/:id")

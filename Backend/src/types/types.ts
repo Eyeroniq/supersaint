@@ -83,6 +83,9 @@ export interface NewOrderRequestBody {
   orderItems: OrderItemType[];
   coupon?: string;
   paymentMethod?: "COD" | "ONLINE";
+  // Analytics context from the storefront tracker
+  sessionId?: string;
+  anonId?: string;
   razorpay?: {
     orderId: string;
     paymentId: string;

@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { DEVICES, ORDER_STATUSES } from "../analytics/constants.js";
 
 //Order Schema
 const schema = new mongoose.Schema(
@@ -57,9 +58,24 @@ const schema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ["Processing", "Shipped", "Delivered"],
+      enum: ORDER_STATUSES,
       default: "Processing",
     },
+    // Every status change with its time; drives delivery-time analytics
+    statusHistory: [
+      {
+        _id: false,
+        status: { type: String, enum: ORDER_STATUSES },
+        at: Date,
+      },
+    ],
+    couponCode: { type: String, default: null },
+    // Analytics context captured at checkout
+    sessionId: { type: String, default: null },
+    anonId: { type: String, default: null },
+    device: { type: String, enum: DEVICES, default: "desktop" },
+    experiments: { type: Map, of: String, default: {} },
+    simulated: { type: Boolean, default: false },
     paymentMethod: {
       type: String,
       enum: ["COD", "ONLINE"],
@@ -84,5 +100,9 @@ const schema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+
+schema.index({ createdAt: 1 });
+schema.index({ user: 1, createdAt: 1 });
+schema.index({ status: 1 });
 
 export const Order = mongoose.model("Order", schema);

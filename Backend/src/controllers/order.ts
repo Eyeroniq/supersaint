@@ -6,6 +6,9 @@ import { invalidateCache, reduceStock } from "../utils/features.js";
 import ErrorHandler from "../utils/utility-class.js";
 import { myCache } from "../app.js";
 import { priceOrder } from "../utils/pricing.js";
+import { Event } from "../models/event.js";
+import { OrderStatus, parseDevice } from "../analytics/constants.js";
+import { freeShippingThresholdFor, variantFor } from "../analytics/experiments.js";
 import {
   fetchRazorpayOrder,
   razorpayEnabled,
@@ -71,15 +74,31 @@ export const getSingleOrder = TryCatch(async (req, res, next) => {
 
 export const newOrder = TryCatch(
   async (req: Request<{}, {}, NewOrderRequestBody>, res, next) => {
-    const { shippingInfo, orderItems, coupon, paymentMethod = "COD", razorpay } = req.body;
+    const {
+      shippingInfo,
+      orderItems,
+      coupon,
+      paymentMethod = "COD",
+      razorpay,
+      sessionId,
+      anonId,
+    } = req.body;
     const user = req.user!._id;
+    const session = typeof sessionId === "string" ? sessionId.slice(0, 64) : null;
+    const anon = typeof anonId === "string" ? anonId.slice(0, 64) : null;
 
     const s = shippingInfo;
     if (!s?.address || !s.city || !s.state || !s.country || !s.pinCode)
       return next(new ErrorHandler("Please enter your full delivery address", 400));
 
     // Totals always come from the database, never from the client
-    const priced = await priceOrder(orderItems, coupon, paymentMethod === "ONLINE");
+    const shippingVariant = await variantFor("free_shipping_threshold", anon ?? undefined);
+    const priced = await priceOrder(
+      orderItems,
+      coupon,
+      paymentMethod === "ONLINE",
+      await freeShippingThresholdFor(anon ?? undefined)
+    );
 
     let paymentId: string | undefined;
     let razorpayOrderId: string | undefined;
@@ -112,8 +131,31 @@ export const newOrder = TryCatch(
       paymentMethod,
       paymentId,
       razorpayOrderId,
+      couponCode: coupon || null,
+      sessionId: session,
+      anonId: anon,
+      device: parseDevice(req.headers["user-agent"]),
+      experiments: shippingVariant ? { free_shipping_threshold: shippingVariant } : {},
+      statusHistory: [{ status: "Processing", at: new Date() }],
       ...priced,
     });
+
+    // order_placed is recorded server-side so the funnel's last step is never lost
+    if (session && anon) {
+      const isReturning = Boolean(
+        await Order.exists({ user, _id: { $ne: order._id } })
+      );
+      await Event.create({
+        session_id: session,
+        anon_id: anon,
+        user_id: user,
+        type: "order_placed",
+        metadata: { order_id: String(order._id), total: priced.total, payment_method: paymentMethod },
+        device: order.device,
+        is_returning: isReturning,
+        timestamp: new Date(),
+      });
+    }
 
     //Now, when a order is placed, we need to reduce the stock of the ordered product..
     await reduceStock(priced.orderItems);
@@ -146,10 +188,10 @@ export const processOrder = TryCatch(async (req, res, next) => {
       order.status = "Delivered";
       break;
     default:
-      order.status = "Delivered";
-      break;
+      return next(new ErrorHandler(`A ${order.status} order can't be advanced`, 400));
   }
 
+  order.statusHistory.push({ status: order.status, at: new Date() });
   await order.save();
 
   invalidateCache({
@@ -164,6 +206,41 @@ export const processOrder = TryCatch(async (req, res, next) => {
     success: true,
     message: "Order Processed Successfully",
   });
+});
+
+// Allowed manual transitions for cancellations, RTO (returned to origin) and returns
+const TRANSITIONS: Record<OrderStatus, OrderStatus[]> = {
+  Processing: ["Shipped", "Cancelled"],
+  Shipped: ["Delivered", "RTO"],
+  Delivered: ["Returned"],
+  Cancelled: [],
+  RTO: [],
+  Returned: [],
+};
+
+export const setOrderStatus = TryCatch(async (req, res, next) => {
+  const { id } = req.params;
+  const nextStatus = req.body?.status as OrderStatus;
+  const order = await Order.findById(id);
+  if (!order) return next(new ErrorHandler("Order Not Found", 404));
+
+  const current = order.status as OrderStatus;
+  if (!TRANSITIONS[current]?.includes(nextStatus))
+    return next(new ErrorHandler(`Can't change a ${current} order to ${nextStatus}`, 400));
+
+  order.status = nextStatus;
+  order.statusHistory.push({ status: nextStatus, at: new Date() });
+  await order.save();
+
+  invalidateCache({
+    product: false,
+    order: true,
+    admin: true,
+    userId: order.user,
+    orderId: String(order._id),
+  });
+
+  return res.status(200).json({ success: true, message: `Order marked ${nextStatus}` });
 });
 
 export const deleteOrder = TryCatch(async (req, res, next) => {

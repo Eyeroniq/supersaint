@@ -7,12 +7,25 @@ import ErrorHandler from "./utility-class.js";
 export const FREE_SHIPPING_THRESHOLD = 999;
 export const SHIPPING_FEE = 99;
 
+// Rupees off for a coupon on a given subtotal (never more than the subtotal)
+export const couponDiscount = (
+  coupon: { type?: string | null; amount: number; maxDiscount?: number | null },
+  subtotal: number
+) => {
+  const raw =
+    coupon.type === "percent" ? Math.round((subtotal * coupon.amount) / 100) : coupon.amount;
+  const capped = coupon.maxDiscount ? Math.min(raw, coupon.maxDiscount) : raw;
+  return Math.max(0, Math.min(capped, subtotal));
+};
+
 // Prices an order from database prices so the client can't change the amount.
 // Prepaid (online) orders always ship free.
 export const priceOrder = async (
   items: OrderItemType[],
   couponCode?: string,
-  prepaid = false
+  prepaid = false,
+  // Free-shipping threshold; only the shipping experiment changes it
+  freeShippingThreshold = FREE_SHIPPING_THRESHOLD
 ) => {
   if (!items?.length) throw new ErrorHandler("Your cart is empty", 400);
 
@@ -43,10 +56,10 @@ export const priceOrder = async (
   if (couponCode) {
     const coupon = await Coupon.findOne({ code: couponCode });
     if (!coupon) throw new ErrorHandler("Invalid Coupon Code", 400);
-    discount = Math.min(coupon.amount, subtotal);
+    discount = couponDiscount(coupon, subtotal);
   }
 
-  const shippingCharges = prepaid || subtotal >= FREE_SHIPPING_THRESHOLD ? 0 : SHIPPING_FEE;
+  const shippingCharges = prepaid || subtotal >= freeShippingThreshold ? 0 : SHIPPING_FEE;
   const total = subtotal + shippingCharges - discount;
 
   return { orderItems, subtotal, tax: 0, shippingCharges, discount, total };
