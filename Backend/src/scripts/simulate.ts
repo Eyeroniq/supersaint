@@ -186,7 +186,8 @@ const simulateSession = (dayIndex: number, dayStartUtc: number, visitor: { anonI
   const sale = SALES.find((s) => inRange(day, s.start, s.end));
   const hour = rng.weighted(HOUR_WEIGHTS.map((w, h) => ({ w, h })), (x) => x.w).h;
   let t = dayStartUtc + hour * 3600_000 + rng.int(0, 3599) * 1000;
-  if (t > END_UTC) return;
+  // Keep whole sessions inside the window
+  if (t > END_UTC - 3 * 3600_000 && dayStartUtc + DAY_MS > END_UTC) t -= 3 * 3600_000;
 
   const sessionId = `sim-s-${rng.hex(16)}`;
   const customer = visitor.customer;
@@ -218,7 +219,9 @@ const simulateSession = (dayIndex: number, dayStartUtc: number, visitor: { anonI
   let intent = 1;
   if (rng.chance(B.searchRate)) {
     const zero = rng.chance(B.zeroResultShare);
-    const term = zero ? rng.pick(ZERO_RESULT_TERMS) : rng.pick(SEARCH_TERMS);
+    // Search interest is long-tailed: earlier terms in each list are searched far more
+    const terms = zero ? ZERO_RESULT_TERMS : SEARCH_TERMS;
+    const term = rng.weighted(terms, (x) => 1 / (1 + terms.indexOf(x)));
     const results = zero ? 0 : rng.int(2, 18);
     emit(zero ? "search_zero_results" : "search", { metadata: { term, results, source: "live_search" } });
     if (zero && rng.chance(0.5)) return; // bounced after finding nothing

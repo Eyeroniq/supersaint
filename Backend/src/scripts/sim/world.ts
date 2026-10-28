@@ -1,3 +1,5 @@
+import { PROMO_CALENDAR } from "../../analytics/calendar.js";
+
 // The simulated store: catalogue, cities, calendar effects and behaviour parameters.
 // Every assumption the simulator makes lives here so it can be documented and audited.
 
@@ -71,17 +73,17 @@ export type SaleEvent = {
   coupon?: { code: string; amount: number; minSubtotal: number; useRate: number };
 };
 
+// Dates come from the store's promo calendar; the effects are simulation assumptions
+const promo = (name: string) => PROMO_CALENDAR.find((p) => p.name === name)!;
+
 export const SALES: SaleEvent[] = [
   {
-    // Big Billion Days-style festive sale
-    name: "Big Saint Days",
-    start: "2026-09-26",
-    end: "2026-10-03",
+    ...promo("Big Saint Days"),
     traffic: 3.2,
     conversion: 1.45,
     coupon: { code: "BIGSAINT200", amount: 200, minSubtotal: 1499, useRate: 0.45 },
   },
-  { name: "End of Season Sale", start: "2026-01-10", end: "2026-01-17", traffic: 1.6, conversion: 1.2 },
+  { ...promo("End of Season Sale"), traffic: 1.6, conversion: 1.2 },
 ];
 
 export type City = { name: string; state: string; tier: "metro" | "tier2" | "tier3"; pin: string; weight: number };

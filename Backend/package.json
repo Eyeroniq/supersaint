@@ -11,7 +11,10 @@
     "dev": "nodemon dist/app.js",
     "seed": "node seed.js",
     "seed:sim": "tsc && node dist/scripts/simulate.js",
-    "test": "vitest run"
+    "test": "vitest run",
+    "export:warehouse": "tsc && node dist/scripts/export-warehouse.js",
+    "sql": "node dist/scripts/run-sql.js",
+    "analytics": "npm run seed:sim && npm run export:warehouse && npm run sql && npm test"
   },
   "author": "",
   "license": "ISC",

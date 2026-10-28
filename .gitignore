@@ -1,0 +1,4 @@
+# Generated analytics warehouse (rebuild with: cd Backend && npm run analytics)
+analytics/warehouse/
+analytics/*.duckdb
+analytics/*.duckdb.wal
