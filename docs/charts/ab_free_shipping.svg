@@ -1,0 +1,6 @@
+<svg xmlns='http://www.w3.org/2000/svg' width='760' height='202' viewBox='0 0 760 202' font-family='Segoe UI, Helvetica, Arial, sans-serif'>
+<rect width='100%' height='100%' fill='#fff'/>
+<text x='20' y='30' font-size='17' font-weight='700' fill='#111'>A/B test: free shipping over ₹1,499 vs ₹999</text>
+<text x='20' y='52' font-size='12.5' fill='#666'>Treatment − control with 95% CI. 2,748 vs 2,666 exposed sessions. Simulated data.</text>
+<line x1='420' y1='70' x2='420' y2='172' stroke='#999' stroke-dasharray='4 4'/><text x='420' y='64' text-anchor='middle' font-size='11' fill='#777'>no difference</text><text x='218' y='98' text-anchor='end' font-size='13' fill='#222'>Conversion (pp)</text><line x1='261.66666666666663' y1='94' x2='547.9298966266039' y2='94' stroke='#6b7280' stroke-width='3'/><circle cx='404.79828164663525' cy='94' r='6' fill='#6b7280'/><text x='622' y='98' font-size='12' fill='#6b7280'>-0.28 pp, p=0.84</text><text x='218' y='144' text-anchor='end' font-size='13' fill='#222'>AOV (₹)</text><line x1='470.4777869648531' y1='140' x2='578.3333333333333' y2='140' stroke='#2f7d4f' stroke-width='3'/><circle cx='524.4055601490933' cy='140' r='6' fill='#2f7d4f'/><text x='622' y='144' font-size='12' fill='#2f7d4f'>+₹161, p=0.0002</text>
+</svg>

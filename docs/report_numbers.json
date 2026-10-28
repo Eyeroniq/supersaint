@@ -1,0 +1,207 @@
+{
+  "funnel": {
+    "viewSessions": 454347,
+    "orders": 16655,
+    "viewToOrder": 0.0367,
+    "viewToCartDropOff": 0.9078,
+    "mobileViewToOrder": 0.0343,
+    "desktopViewToOrder": 0.044
+  },
+  "payments": {
+    "codShare": 0.476,
+    "codRto": 0.1186,
+    "prepaidRto": 0.0212,
+    "codCancel": 0.0769,
+    "prepaidCancel": 0.0296,
+    "codLost": 0.2364,
+    "prepaidLost": 0.0897,
+    "codLostGmv": 3879586,
+    "rtoZ": 25.005942511493693,
+    "rtoP": 0,
+    "codRtoOrders": 940,
+    "codRtoCost": 169200,
+    "top5CityShareOfCodRto": 0.3489,
+    "top5Cities": [
+      "Delhi",
+      "Bengaluru",
+      "Mumbai",
+      "Ahmedabad",
+      "Hyderabad"
+    ]
+  },
+  "monthly": {
+    "saleMonthGmv": 4910940,
+    "saleMonthMoM": 0.6553,
+    "totalGmv": 34266917
+  },
+  "rfm": {
+    "Hibernating": {
+      "customers": 5175,
+      "customerShare": 0.3925,
+      "revenueShare": 0.3688,
+      "avgOrders": 1.09,
+      "avgSpend": 2314.04
+    },
+    "New Customers": {
+      "customers": 4392,
+      "customerShare": 0.3331,
+      "revenueShare": 0.2813,
+      "avgOrders": 1,
+      "avgSpend": 2079.46
+    },
+    "Need Attention": {
+      "customers": 2609,
+      "customerShare": 0.1979,
+      "revenueShare": 0.1813,
+      "avgOrders": 1.19,
+      "avgSpend": 2256.97
+    },
+    "Potential Loyalists": {
+      "customers": 787,
+      "customerShare": 0.0597,
+      "revenueShare": 0.1102,
+      "avgOrders": 2.2,
+      "avgSpend": 4547.04
+    },
+    "Champions": {
+      "customers": 95,
+      "customerShare": 0.0072,
+      "revenueShare": 0.0272,
+      "avgOrders": 4.51,
+      "avgSpend": 9299.42
+    },
+    "At Risk": {
+      "customers": 99,
+      "customerShare": 0.0075,
+      "revenueShare": 0.0228,
+      "avgOrders": 3.4,
+      "avgSpend": 7481.27
+    },
+    "Loyal": {
+      "customers": 28,
+      "customerShare": 0.0021,
+      "revenueShare": 0.0084,
+      "avgOrders": 4.82,
+      "avgSpend": 9762.11
+    }
+  },
+  "rfmRepeatGroup": {
+    "customerShare": 0.07650000000000001,
+    "revenueShare": 0.16860000000000003
+  },
+  "retention": {
+    "m1": 0.061714676468074194,
+    "m3": 0.029958677685950414,
+    "m6": 0.01137955182072829,
+    "medianDaysToSecondOrder": 31,
+    "within30": 0.4955,
+    "within60": 0.7242
+  },
+  "search": {
+    "zeroShareOfSearches": 0.14150000000000001,
+    "zeroSessions": 18318,
+    "zeroConversion": 0.0151,
+    "resultsConversion": 0.0444,
+    "p": 0,
+    "topZeroTerms": [
+      {
+        "term": "joggers",
+        "searches": 6746,
+        "share": 0.0521
+      },
+      {
+        "term": "socks",
+        "searches": 3301,
+        "share": 0.0255
+      },
+      {
+        "term": "cap",
+        "searches": 2243,
+        "share": 0.0173
+      },
+      {
+        "term": "compression",
+        "searches": 1754,
+        "share": 0.0136
+      }
+    ],
+    "extraOrdersIfFixed": 537
+  },
+  "experiments": {
+    "freeShipping": {
+      "exposed": [
+        2748,
+        2666
+      ],
+      "conversion": [
+        0.386098981077147,
+        0.3833458364591148
+      ],
+      "conversionLiftPp": -0.0027531446180322217,
+      "conversionRelLift": -0.007130670509286094,
+      "conversionP": 0.835105059472673,
+      "conversionCi": [
+        -0.028675348035591165,
+        0.023169058799526722
+      ],
+      "aov": [
+        2010.53,
+        2171.68
+      ],
+      "aovLift": 161.14999999999986,
+      "aovRelLift": 0.08015299448404145,
+      "aovP": 0.0001508036563518136,
+      "aovCi": [
+        77.91247283928033,
+        244.3875271607194
+      ],
+      "rps": [
+        776.26,
+        832.5
+      ],
+      "cancellation": [
+        0.0566,
+        0.0568
+      ]
+    },
+    "couponOffer": {
+      "exposed": [
+        2575,
+        2613
+      ],
+      "redemption": [
+        0.07456310679611651,
+        0.11902028319938768
+      ],
+      "redemptionP": 6.274420627505606e-8,
+      "conversion": [
+        0.4027184466019417,
+        0.4079601990049751
+      ],
+      "conversionP": 0.700613631243181,
+      "discountPerOrder": [
+        182.76,
+        150
+      ]
+    },
+    "welcome": {
+      "aov": 1937.49,
+      "incrementalAov": -133.3,
+      "share": 0.1444
+    },
+    "bigSaint": {
+      "aov": 2425.65,
+      "incrementalAov": 354.87
+    }
+  },
+  "pareto": {
+    "products": 47,
+    "aProducts": 22,
+    "lowCover": [
+      "Essential Oversized Hoodie - Black (0.9 days)",
+      "Essential Oversized Vintage Sweatpants - Navy (4.9 days)",
+      "Everyday Fitted Tee - Olive (1.5 days)",
+      "Essential Oversized Hoodie - Olive (8.1 days)"
+    ]
+  }
+}

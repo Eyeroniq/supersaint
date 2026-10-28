@@ -1,0 +1,6 @@
+<svg xmlns='http://www.w3.org/2000/svg' width='760' height='222' viewBox='0 0 760 222' font-family='Segoe UI, Helvetica, Arial, sans-serif'>
+<rect width='100%' height='100%' fill='#fff'/>
+<text x='20' y='30' font-size='17' font-weight='700' fill='#111'>Session conversion by search behaviour</text>
+<text x='20' y='52' font-size='12.5' fill='#666'>Sessions whose only searches returned nothing convert far worse. Simulated data.</text>
+<text x='220' y='89' text-anchor='end' font-size='13' fill='#222'>did not search</text><rect x='230' y='74' width='329.16177046611824' height='18' rx='3' fill='#1f3a93'/><text x='565.1617704661182' y='87' font-size='12' fill='#333'>3.43%</text><text x='220' y='125' text-anchor='end' font-size='13' fill='#222'>searched, saw results</text><rect x='230' y='110' width='426.0869565217391' height='18' rx='3' fill='#1f3a93'/><text x='662.0869565217391' y='123' font-size='12' fill='#333'>4.44%</text><text x='220' y='161' text-anchor='end' font-size='13' fill='#222'>searched, zero results only</text><rect x='230' y='146' width='144.90795142969057' height='18' rx='3' fill='#1f3a93'/><text x='380.90795142969057' y='159' font-size='12' fill='#333'>1.51%</text>
+</svg>
